@@ -10,6 +10,7 @@ featureVectorSize = numChannels*featuresPerChannel;
 % decided on the numImages based on the count which I ran the program once
 numImages = 742;
 count = 0;
+lie_count=0;
 featureMatrix = zeros(numImages, featureVectorSize);
 additionalSeeFeature = zeros(numImages,1);
 ys = zeros(numImages,1);
@@ -55,6 +56,9 @@ for exp=1:numel(experiments)
                additionalSeeFeature(count) = did_see;
 %                add Y
                ys(count) = y;
+               if y ==1
+                    lie_count = lie_count+1;
+               end
            end   
         end
     end
