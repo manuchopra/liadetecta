@@ -4,14 +4,18 @@ experiments = [1, 2, 3, 4, 5];
 % stims[probe, target, irrelevant]
 stims = [1, 2, 3];
 % channels to get rid off: (50, 51, 65, 67)
-numChannels = 67;
-featuresPerChannel = 276;
+channels_skip = [50, 51, 65, 66, 67];
+% skipping 5 channels
+numChannels = 67-5;
+% add the mean feature per channel
+featuresPerChannel = 276+1;
 featureVectorSize = numChannels*featuresPerChannel;
 % decided on the numImages based on the count which I ran the program once
 numImages = 742;
 count = 0;
 lie_count=0;
 featureMatrix = zeros(numImages, featureVectorSize);
+combinedMeanMatrix = zeros(numImages, numChannels);
 additionalSeeFeature = zeros(numImages,1);
 ys = zeros(numImages,1);
 
@@ -47,12 +51,28 @@ for exp=1:numel(experiments)
            end
            file_path = strcat(file_location,file_name);
 %            Check whether the file exists
+
            if exist(file_path, 'file') == 2
                count = count+1;
                file = load(file_path);
                imageDataMatrix = file.F;
-               channelVector = reshape(imageDataMatrix,1,[]);
-               featureMatrix(count,:) = channelVector;
+               % get rid of channels 50, 51, 65, 66, 67
+%              63 channels
+               newImageDataMatrix = imageDataMatrix([1:49,52:64],:);
+%                calculate mean value of all channels
+               meansMatrix = mean(newImageDataMatrix, 2);
+%                combine the channel values with means (each row has 276
+%                values from each channel and 277th is the mean of the
+%                first 276)
+               imgEEGMatrix = horzcat(newImageDataMatrix,meansMatrix);
+%                eegFeatureVector = reshape(imgEEGMatrix,1,[]);
+               eegFeatureVector= [];
+               for ch=1:size(imgEEGMatrix,1)
+                 vec_row = imgEEGMatrix(ch,:);
+                 eegFeatureVector = [eegFeatureVector vec_row];
+               end
+               featureMatrix(count,:) = eegFeatureVector;
+               combinedMeanMatrix(count,:) = meansMatrix;
                additionalSeeFeature(count) = did_see;
 %                add Y
                ys(count) = y;
@@ -66,4 +86,7 @@ end
 
 X = horzcat(featureMatrix,additionalSeeFeature);
 y = ys;
-save('feature_extractor.mat','X','y')
+save('feature_extractor.mat','X','y','combinedMeanMatrix')
+hdf5write('eeg_X.h5', '/extractor', X);
+hdf5write('eeg_y.h5', '/extractor', y);
+hdf5write('eeg_means.h5', '/extractor', combinedMeanMatrix);
