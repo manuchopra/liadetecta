@@ -84,7 +84,7 @@ def cross_validate(X, Y, model, kFold, test_fraction):
 	# print("RESULTS:")
 	for k in range(kFold):
 		train_data, test_data, train_y, test_y = split_dataset(X, Y, test_fraction)
-		model.fit(train_data, train_age)
+		model.fit(train_data, train_y)
 		correct_count = 0
 		true_pos_count = 0
 		true_neg_count = 0
@@ -92,7 +92,7 @@ def cross_validate(X, Y, model, kFold, test_fraction):
 		false_neg_count = 0
 		for i in range(len(test_data)):
 			pred = model.predict(test_data[i,:])
-			actual = test_age[i]
+			actual = test_y[i]
 			# print("Pred: ", pred, "Actual: ", actual)
 			if pred == actual:
 				correct_count += 1
@@ -108,8 +108,8 @@ def cross_validate(X, Y, model, kFold, test_fraction):
 
 
 		test_acc = float(correct_count) / float(len(test_data))
-		num_pos = len([1 for i in range(len(test_data)) if test_age[i] == 0])
-		num_neg = len([1 for i in range(len(test_data)) if test_age[i] == 1])
+		num_pos = len([1 for i in range(len(test_data)) if test_y[i] == 0])
+		num_neg = len([1 for i in range(len(test_data)) if test_y[i] == 1])
 
 		accuracies.append(test_acc)
 		true_pos_counts.append((float(true_pos_count) + 1) / (num_pos + 1))
@@ -187,11 +187,11 @@ def getData():
 # have final X and y
 
 
-def featureSelection(X, y):
+def featureSelection(X, y, numFeatures):
 	# VarianceThreshold(threshold=(.8 * (1 - .8))) doesn't work
 	# ValueError: No feature in X meets the variance threshold 0.16000
 	# print X.shape
-	X_new = SelectKBest(f_classif, k=100).fit_transform(X, y)
+	X_new = SelectKBest(f_classif, k=numFeatures).fit_transform(X, y)
 	# print len(X_new), len(X_new[0]), X_new[0]
 	# print X_new.shape
 	return X_new
@@ -199,24 +199,36 @@ def featureSelection(X, y):
 def modelSelection(X, y):
 	K_FOLDS = 50
 	TEST_FRACTION = 0.3
-	NUM_FEATURES = 100
 
-	# model_arr = [
- #                QDA(),
-	# 			LDA(),
-	# 			DecisionTreeClassifier(max_depth=5), 
-	# 			KNeighborsClassifier(3), 
-	# 			SVC(gamma=2, C=1), 
-	# 			SVC(kernel="linear", C=0.025), 
-	# 			GaussianNB(), 
-	# 			LogisticRegression()]
+	model_arr = [
+                # QDA(),
+				LDA(),
+				DecisionTreeClassifier(max_depth=5), 
+				KNeighborsClassifier(3), 
+				SVC(gamma=2, C=1), 
+				SVC(kernel="linear", C=0.025), 
+				GaussianNB(), 
+				LogisticRegression()]
+	
+	model_names = [
+				# "QDA()",
+				"LDA()",
+				"DecisionTreeClassifier(max_depth=5)", 
+				"KNeighborsClassifier(3)", 
+				"SVC(gamma=2, C=1)", 
+				"SVC(kernel=linear, C=0.025)", 
+				"GaussianNB()", 
+				"LogisticRegression()"]
 
-	result = cross_validate(X, y, GaussianNB(), K_FOLDS, TEST_FRACTION)
-	print result
+	for i, m in enumerate(model_arr):
+		result = cross_validate(X, y, m, K_FOLDS, TEST_FRACTION)
+		print model_names[i]
+		print result
 
 def main(X, y):
 	numSamples, numFeatures = getNumRowsCols(X)
-	X = featureSelection(X, y)
+	selectNumFeatures = 500
+	X = featureSelection(X, y, selectNumFeatures)
 	print X.shape
 	modelSelection(X, y)
 	
