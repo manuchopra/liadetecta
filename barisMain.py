@@ -179,14 +179,13 @@ def getData():
 	# print len(ycombined)
 	
 	# All our samples and data. X(1342, 17175)
+	# append all ben to initial
 	return Xcombined, ycombined
 
-# append all ben to initial
+
 
 
 # have final X and y
-
-
 def featureSelection(X, y, numFeatures):
 	# VarianceThreshold(threshold=(.8 * (1 - .8))) doesn't work
 	# ValueError: No feature in X meets the variance threshold 0.16000
@@ -196,12 +195,18 @@ def featureSelection(X, y, numFeatures):
 	# print X_new.shape
 	return X_new
 
+
+# def pcaTry(X):
+#     pca = decomposition.PCA(n_components=3)
+#     pca.fit(X)
+#     X = pca.transform(X)
+#     return X
+
 def modelSelection(X, y):
-	K_FOLDS = 50
+	K_FOLDS = 200
 	TEST_FRACTION = 0.3
 
 	model_arr = [
-                # QDA(),
 				LDA(),
 				DecisionTreeClassifier(max_depth=5), 
 				KNeighborsClassifier(3), 
@@ -211,7 +216,6 @@ def modelSelection(X, y):
 				LogisticRegression()]
 	
 	model_names = [
-				# "QDA()",
 				"LDA()",
 				"DecisionTreeClassifier(max_depth=5)", 
 				"KNeighborsClassifier(3)", 
@@ -226,26 +230,14 @@ def modelSelection(X, y):
 		print result
 
 def main(X, y):
-	numSamples, numFeatures = getNumRowsCols(X)
-	selectNumFeatures = 500
+	# numSamples, numFeatures = getNumRowsCols(X)
+	selectNumFeatures = 1000
 	X = featureSelection(X, y, selectNumFeatures)
-	print X.shape
+	# X = pcaTry(X)
+	print "X: ", X.shape 
+	print "Number of Features: ", selectNumFeatures
 	modelSelection(X, y)
 	
-
-    # data = np.loadtxt(CSV_FILE, delimiter=' ')
-    # num_cols = 8
-    # num_rows = len(data[:,10])
-    # y = data[:,0]
-    # X = data[:,np.arange(1,9)]
-    # print(X)
-    # clf = SVC()
-    # clf.fit(X, Y)
-    
-    # FIRST_ROW = X[67,:]
-    # print("row",str(FIRST_ROW))
-    # print(clf.predict(FIRST_ROW))
-
 
 X, y = getData()
 main(X, y)

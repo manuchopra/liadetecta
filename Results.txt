@@ -1,0 +1,100 @@
+Results
+
+(balanced accuracy, avg. accuracy)
+
+(1342, 500)
+LDA()
+(0.7013090523281713, 0.6996294221919559)
+DecisionTreeClassifier(max_depth=5)
+(0.5998802266811993, 0.5964949106517635)
+KNeighborsClassifier(3)
+(0.5638409367980519, 0.5599876072320581)
+SVC(gamma=2, C=1)
+(0.5095711969846115, 0.5048454052472812)
+SVC(kernel=linear, C=0.025)
+(0.5093625689069141, 0.5047388135381911)
+GaussianNB()
+(0.6202329775111887, 0.6235651527547923)
+LogisticRegression()
+(0.5093824557121405, 0.5047489792698142)
+
+
+#########################################
+
+X:  (1342, 1000)
+Number of Features:  1000
+/Library/Python/2.7/site-packages/sklearn/lda.py:161: UserWarning: Variables are collinear
+  warnings.warn("Variables are collinear")
+LDA()
+(0.6913453556608855, 0.690055420172758)
+DecisionTreeClassifier(max_depth=5)
+(0.5988410771885474, 0.595389439307745)
+KNeighborsClassifier(3)
+(0.5412015830531419, 0.537059415767646)
+SVC(gamma=2, C=1)
+(0.5092992656843711, 0.5047064856603863)
+SVC(kernel=linear, C=0.025)
+(0.5095312783850565, 0.5048250077154242)
+GaussianNB()
+(0.6871346742276573, 0.6884948966929406)
+LogisticRegression()
+(0.5092926448088306, 0.5047031048961077)
+
+##########################################
+
+Testing NB with diff. features
+
+DN0a2338da:liadetecta barisakis$ python barisMain.py 
+X:  (1342, 10000)
+Number of Features:  10000
+(0.644528976535385, 0.6456430838196078)
+DN0a2338da:liadetecta barisakis$ python barisMain.py 
+X:  (1342, 5000)
+Number of Features:  5000
+(0.5913506168137523, 0.5891084994945022)
+
+#########################################
+Testing with PCA
+
+DN0a2338da:liadetecta barisakis$ python barisMain.py 
+X:  (1342, 3)
+Number of Features:  1000
+LDA()
+(0.5166085663905843, 0.5120182459082697)
+DecisionTreeClassifier(max_depth=5)
+(0.5179372384667982, 0.5133630992559525)
+KNeighborsClassifier(3)
+(0.5339739125407927, 0.530038456976417)
+SVC(gamma=2, C=1)
+(0.5091626398645959, 0.5046367191373804)
+SVC(kernel=linear, C=0.025)
+(0.5090684508728212, 0.5045886319622658)
+GaussianNB()
+(0.592606080440315, 0.5961347218313147)
+LogisticRegression()
+(0.5092199363336268, 0.5046659814047246)
+
+#########################################
+
+KFOLD 300
+
+DN0a2338da:liadetecta barisakis$ python barisMain.py 
+X:  (1342, 1000)
+Number of Features:  1000
+/Library/Python/2.7/site-packages/sklearn/lda.py:161: UserWarning: Variables are collinear
+  warnings.warn("Variables are collinear")
+LDA()
+(0.6929889468074812, 0.6917881880854008)
+DecisionTreeClassifier(max_depth=5)
+(0.5941887831617565, 0.5907187746841621)
+KNeighborsClassifier(3)
+(0.5341445757330499, 0.5299463135831847)
+SVC(gamma=2, C=1)
+(0.5095035464163297, 0.5048108439580046)
+SVC(kernel=linear, C=0.025)
+(0.5093995450756206, 0.5047577113260466)
+GaussianNB()
+(0.6905443556523768, 0.6918832197823345)
+LogisticRegression()
+(0.5095219272482316, 0.5048202331886754)
+
