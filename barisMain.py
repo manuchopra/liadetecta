@@ -32,17 +32,18 @@ import h5py
 import numpy
 
 ######## Short Explanation & Sizes ##########
-# X: our main feature vector with size 742X17175
+# X: our main feature vector with size 1342X17175
 # 	each row is an image
 # 	columns are ordered such:
 # 		for each chnannel
 # 			276 values of 1st channel, mean(176 val fist channels)
 # 		at the end value 17175 is whether subject saw the image before or not
 # 
-# y: lie/no lie values for all iamges 742X1
+# y: lie/no lie values for all iamges 1342X1 (150 lies)
 # 
 # means: a smaller feature matrix only with the means for each channels 742X62
 # 
+#
 # ben experiment size: (600, 17175)
 # 
 # 
@@ -177,10 +178,15 @@ def getData():
 	# print len(Xcombined), len(Xcombined[0])
 	ycombined = np.concatenate((y, y_ben), axis=0)
 	# print len(ycombined)
-	
 	# All our samples and data. X(1342, 17175)
 	# append all ben to initial
 	return Xcombined, ycombined
+
+	#this is to test with only using means as features
+	# means_t = transformX(means)
+	# means_bt = transformX(means_ben)
+	# Xmean = np.concatenate((means_t, means_bt), axis=0)
+	# return Xmean, ycombined
 
 
 
@@ -202,10 +208,7 @@ def featureSelection(X, y, numFeatures):
 #     X = pca.transform(X)
 #     return X
 
-def modelSelection(X, y):
-	K_FOLDS = 200
-	TEST_FRACTION = 0.3
-
+def modelSelection(X, y, KFold, test_fraction):
 	model_arr = [
 				LDA(),
 				DecisionTreeClassifier(max_depth=5), 
@@ -225,19 +228,42 @@ def modelSelection(X, y):
 				"LogisticRegression()"]
 
 	for i, m in enumerate(model_arr):
-		result = cross_validate(X, y, m, K_FOLDS, TEST_FRACTION)
+		result = cross_validate(X, y, m, KFold, test_fraction)
 		print model_names[i]
 		print result
 
+
+def runNB(X, y, KFold, test_fraction):
+	result = cross_validate(X, y, GaussianNB(), KFold, test_fraction)
+	return result
+
+def selectNumFeatures(X ,y):
+	results = []
+	for i in range(500, 3000):
+		Xtest = featureSelection(X, y, i)
+		result = runNB(Xtest, y, 50, 0.3)
+		print "Number of features used: %s Accuracy: %s" % (i, result)
+		results.append((result[0], i))
+	print results
+	print "BEST: ", max(results)
+	return max(results)
+
+
 def main(X, y):
 	# numSamples, numFeatures = getNumRowsCols(X)
-	selectNumFeatures = 1000
-	X = featureSelection(X, y, selectNumFeatures)
+	
+	# selectNumFeatures(X ,y) returns 1075
+	NumberOfFeatures = 1075
+	K_FOLDS = 200
+	TEST_FRACTION = 0.3
+	X = featureSelection(X, y, NumberOfFeatures)
 	# X = pcaTry(X)
 	print "X: ", X.shape 
-	print "Number of Features: ", selectNumFeatures
-	modelSelection(X, y)
-	
+	print "Number of Features: ", NumberOfFeatures
+	# modelSelection(X, y, K_FOLDS, TEST_FRACTION)
+	nb_result = runNB(X, y, K_FOLDS, TEST_FRACTION)
+	print nb_result
+
 
 X, y = getData()
 main(X, y)

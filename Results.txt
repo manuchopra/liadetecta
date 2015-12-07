@@ -98,3 +98,25 @@ GaussianNB()
 LogisticRegression()
 (0.5095219272482316, 0.5048202331886754)
 
+#########################################
+
+USING MEANS AS THE FEATURE
+
+DN0a2338da:liadetecta barisakis$ python barisMain.py 
+X:  (1342, 62)
+Number of Features:  1000
+LDA()
+(0.5155533195772657, 0.5111199759007954)
+DecisionTreeClassifier(max_depth=5)
+(0.534181741263972, 0.529901109185518)
+KNeighborsClassifier(3)
+(0.5531646015888603, 0.5493856255654471)
+SVC(gamma=2, C=1)
+(0.5092559451490914, 0.5046843701126746)
+SVC(kernel=linear, C=0.025)
+(0.5094508371236052, 0.5047839138707223)
+GaussianNB()
+(0.5092824972652792, 0.5045524736314527)
+LogisticRegression()
+(0.5091827927018233, 0.5046470101191333)
+
